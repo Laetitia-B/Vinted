@@ -1,0 +1,7 @@
+package vinted
+
+sealed trait Strategy
+
+sealed trait TransportCO2Intensity
+object Sigmoide extends TransportCO2Intensity
+object DecreasingExponential extends TransportCO2Intensity
