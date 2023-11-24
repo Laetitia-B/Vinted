@@ -1,7 +1,19 @@
 package vinted
 
-sealed trait Strategy
+enum TransportCO2Intensity:
+  case Sigmoide, DecreasingExponential
 
-sealed trait TransportCO2Intensity
-object Sigmoide extends TransportCO2Intensity
-object DecreasingExponential extends TransportCO2Intensity
+
+case class Reinvestment(`new`: Double, platform: Double, elsewhere: Double) // sum is 1
+
+type Delay = Int
+type SimulationStep = Int
+//type ReinvestmentDistributionChange = Reinvestment => Reinvestment
+//type ReinvestmentDistributionPolicy = Array[(SimulationStep, ReinvestmentDistributionChange)]
+//
+//def fivePcToNew(reinvestment: Reinvestment) = Reinvestment(`new` = reinvestment.`new` * 0.95, platform = reinvestment.platform * 1.05)
+//
+//val rdp = Array(
+//  (10, (r: Reinvestment)=> fivePcToNew(r)),
+//  (20, (r: Reinvestment)=> fivePcToNew(r))
+//)

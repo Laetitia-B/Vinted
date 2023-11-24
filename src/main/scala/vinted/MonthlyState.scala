@@ -5,7 +5,11 @@ import vinted.Constants._
 case class MonthlyState(
                          sellers: Int,
                          buyers: Int,
-                         sales: NB_ITEMS,
+                         itemsBySeller: NB_ITEMS_BY_MONTH,
+                         itemsByBuyer: NB_ITEMS_BY_MONTH,
+                         itemsForSales: NB_ITEMS_BY_MONTH,
+                         purchaseIntention: NB_ITEMS_BY_MONTH,
+                         sales: NB_ITEMS_BY_MONTH,
                          income: EURO,
                          replacement: Int,
                          impulsive: Int,
@@ -15,4 +19,3 @@ case class MonthlyState(
                          transportationEmission: KG_CO2,
                          co2Emission: KG_CO2
                  )
-

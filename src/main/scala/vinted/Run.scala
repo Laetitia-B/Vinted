@@ -7,7 +7,7 @@ object Run extends App:
   Simulation
     (
 
-      transportCO2Intensity = Sigmoide,
+      transportCO2Intensity = TransportCO2Intensity.Sigmoide,
 
     )
 

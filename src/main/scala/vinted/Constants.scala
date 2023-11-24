@@ -5,7 +5,8 @@ object Constants:
   type KG_CO2 = Int
   type KM = Int
   type EURO = Int
-  type NB_ITEMS = Int
+  type NB_ITEMS_BY_MONTH = Int
+  type MONTH = Int
 
   val KG_CO2_PER_ITEM_PRODUCTION = 15.0
   val ATTRACTIVENESS_FOR_SELLERS = 0.01
