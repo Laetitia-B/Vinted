@@ -13,6 +13,8 @@ case class MonthlyState(
                          income: EURO,
                          replacement: Int,
                          impulsive: Int,
+                         co2reinvestementInNew: KG_CO2,
+                         co2reinvestementElsewhere: KG_CO2, 
                          avoidedProductionEmission: KG_CO2,
                          additionalProductionEmission: KG_CO2,
                          totalDistance: KM,
