@@ -5,9 +5,9 @@ import vinted.Constants._
 case class MonthlyState(
                          sellers: Int,
                          buyers: Int,
-                         itemsBySeller: NB_ITEMS_BY_MONTH,
-                         itemsByBuyer: NB_ITEMS_BY_MONTH,
-                         itemsForSales: NB_ITEMS_BY_MONTH,
+                         itemsBySeller: Double,
+                         itemsByBuyer: Double,
+                         itemsForSale: NB_ITEMS_BY_MONTH,
                          purchaseIntention: NB_ITEMS_BY_MONTH,
                          sales: NB_ITEMS_BY_MONTH,
                          income: EURO,

@@ -1,7 +1,8 @@
 package vinted
 
+
 enum TransportCO2Intensity:
-  case Sigmoide, DecreasingExponential
+  case ReverseSigmoide, DecreasingExponential
 
 
 case class Reinvestment(`new`: Double, platform: Double, elsewhere: Double) // sum is 1
@@ -17,3 +18,11 @@ type SimulationStep = Int
 //  (10, (r: Reinvestment)=> fivePcToNew(r)),
 //  (20, (r: Reinvestment)=> fivePcToNew(r))
 //)
+
+package object strategy {
+  
+  def getTransportCO2(t: Double, transportCO2Intensity: TransportCO2Intensity) =
+    transportCO2Intensity match
+      case TransportCO2Intensity.ReverseSigmoide=>  1.0 / (1.0 + Math.exp(t))
+      case TransportCO2Intensity.DecreasingExponential=> Math.exp(-t)
+}

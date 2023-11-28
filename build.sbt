@@ -8,4 +8,4 @@ OsgiKeys.privatePackage := Seq("!scala.*,META-INF.*,*")
 OsgiKeys.requireCapability := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))""""
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 osgiSettings
-mainClass in(Compile, run) := Some("vinted.Vinted")
+mainClass in(Compile, run) := Some("vinted.Run")
