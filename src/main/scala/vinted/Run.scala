@@ -6,8 +6,8 @@ object Run extends App:
 
   val simulation =
     Simulation(
-      initialSellers = 30000000,
-      initialBuyers = 15000000,
+      initialSellers = 30,
+      initialBuyers = 15,
       initialItemsBySeller = 1.66,
       initialItemsByBuyer = 1.0,
       transportCO2Intensity = TransportCO2Intensity.Constant,
@@ -20,7 +20,7 @@ object Run extends App:
       reinvestementInNewRatio = 0.09, //sum of reinvestments is 1
       reinvestementInPlatformRatio = 0.61,
       reinvestementElsewhereRatio = 0.3,
-      effectiveSalesCoefficient = 0.8,
+      effectiveSalesCoefficient = 0.85,
       attractivenessForSellersDelay = 4,
       attractivenessForBuyersDelay = 3,
       reinvestmentDelay = 6
