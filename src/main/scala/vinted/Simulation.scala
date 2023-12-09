@@ -41,8 +41,12 @@ object Simulation:
         val stateBeforeAttractivenessForSellersDelay = getMonthlyStateWithDelay(states, simulation.attractivenessForSellersDelay)
         val stateBeforeAttractivenessForBuyersDelay = getMonthlyStateWithDelay(states, simulation.attractivenessForBuyersDelay)
 
-        val totalSellers = currentMonthState.sellers + stateBeforeAttractivenessForSellersDelay.map(_.sales).getOrElse(0.0) * ATTRACTIVENESS_FOR_SELLERS
-        val totalBuyers = currentMonthState.buyers + stateBeforeAttractivenessForBuyersDelay.map(_.itemsForSale).getOrElse(0.0) * ATTRACTIVENESS_FOR_BUYERS
+        val totalSellers = simulation.initialSellers + stateBeforeAttractivenessForSellersDelay.map(_.sales).getOrElse(0.0) * ATTRACTIVENESS_FOR_SELLERS
+        println(timeStep)
+        println(stateBeforeAttractivenessForSellersDelay.map(_.sales).getOrElse(0.0))
+        println("TS: " + totalSellers)
+        
+        val totalBuyers = simulation.initialBuyers + stateBeforeAttractivenessForBuyersDelay.map(_.itemsForSale).getOrElse(0.0) * ATTRACTIVENESS_FOR_BUYERS
 
         val additionalPurchaseIntention = getMonthlyStateWithDelay(states, simulation.reinvestmentDelay).map(_.sales).getOrElse(0.0) * simulation.reinvestementInPlatformRatio
 
