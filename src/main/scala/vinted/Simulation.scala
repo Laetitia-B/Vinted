@@ -16,7 +16,6 @@ case class Simulation(
                        replacementRatio: Double, //sum of replacement/impulsive < 1
                        impulsiveRatio: Double,
                        secondHandItemsRatio: Double,
-                       newItemsRatio: Double,
                        reinvestementInNewRatio: Double, //sum of reinvestments is 1
                        reinvestementInPlatformRatio: Double,
                        reinvestementElsewhereRatio: Double,
@@ -59,7 +58,7 @@ object Simulation:
         val totalDistance = sales * simulation.averageDistance
         val transportationEmission = totalDistance * strategy.getTransportCO2(timeStep, simulation.transportCO2Intensity)
         val avoidedProductionEmission = replacement * simulation.secondHandItemsRatio * KG_CO2_PER_ITEM_PRODUCTION
-        val additionalProductionEmission = impulsive * simulation.newItemsRatio * KG_CO2_PER_ITEM_PRODUCTION
+        val additionalProductionEmission = impulsive * (1 - simulation.secondHandItemsRatio) * KG_CO2_PER_ITEM_PRODUCTION
         val co2reinvestementElsewhere = income * simulation.reinvestementElsewhereRatio * KG_CO2_PER_EURO_SPENT
         val co2reinvestementInNew = sales * simulation.reinvestementInNewRatio * KG_CO2_PER_ITEM_PRODUCTION
 
