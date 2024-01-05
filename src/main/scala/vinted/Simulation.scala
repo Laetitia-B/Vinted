@@ -10,6 +10,10 @@ case class Simulation(
                        initialBuyers: Int,
                        initialItemsBySeller: NB_ITEMS_BY_MONTH,
                        initialItemsByBuyer: NB_ITEMS_BY_MONTH,
+                       maximumItemsBySeller: NB_ITEMS_BY_MONTH,
+                       maximumItemsByBuyer: NB_ITEMS_BY_MONTH,
+                       maximumItemsBySellerDelay: MONTH,
+                       maximumItemsByBuyerDelay: MONTH,
                        transportCO2Intensity: TransportCO2Intensity,
                        averageDistance: KM,
                        averagePrice: EURO,
@@ -46,9 +50,15 @@ object Simulation:
 
         val additionalPurchaseIntention = getMonthlyStateWithDelay(states, simulation.reinvestmentDelay).map(_.sales).getOrElse(0.0) * simulation.reinvestementInPlatformRatio
 
-        val itemsByBuyer = simulation.initialItemsByBuyer // TODO: add a strategy for buyer incentive
+        val itemsByBuyer = 
+          if (simulation.maximumItemsByBuyerDelay - timeStep < 0 ) math.min(simulation.maximumItemsByBuyer, simulation.initialItemsByBuyer)
+          else simulation.initialItemsByBuyer
         val purchaseIntention = currentMonthState.buyers * itemsByBuyer + additionalPurchaseIntention
 
+        val itemsBySeller = 
+          if (simulation.maximumItemsBySellerDelay - timeStep < 0) math.min(simulation.maximumItemsBySeller, simulation.initialItemsBySeller)
+          else simulation.initialItemsBySeller
+        
         val itemsForSale = totalSellers * currentMonthState.itemsBySeller
         val sales = Math.min(itemsForSale, purchaseIntention) * simulation.effectiveSalesCoefficient
         val replacement = sales * simulation.replacementRatio
@@ -64,7 +74,7 @@ object Simulation:
         val monthlyState = MonthlyState(
           sellers = totalSellers,
           buyers = totalBuyers,
-          itemsBySeller = simulation.initialItemsBySeller, // TODO: add a strategy for seller incentive
+          itemsBySeller = itemsBySeller, // TODO: add a strategy for seller incentive
           itemsByBuyer = itemsByBuyer,
           itemsForSale = itemsForSale,
           purchaseIntention = purchaseIntention,
