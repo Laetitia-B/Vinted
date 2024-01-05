@@ -10,9 +10,9 @@ object Run extends App:
       initialBuyers = 15,
       initialItemsBySeller = 1.66,
       initialItemsByBuyer = 1.0,
-      maximumItemsBySeller = 1.0,
+      maximumItemsBySeller = 2.0,
       maximumItemsBySellerDelay = 50,
-      maximumItemsByBuyer = 0.5,
+      maximumItemsByBuyer = 1.0,
       maximumItemsByBuyerDelay = 50,
       transportCO2Intensity = TransportCO2Intensity.Constant,
       averageDistance = 150,
@@ -30,4 +30,8 @@ object Run extends App:
       reinvestmentDelay = 6
     )
 
-  MonthlyState.print(Simulation.run(simulation).last)
+  val states = Simulation.run(simulation)
+  MonthlyState.print(states.last)
+
+  println("TOTAL CO2 " + Metrics.totalCO2(states))
+  println("TOTAL SALES " + Metrics.totalSales(states))
