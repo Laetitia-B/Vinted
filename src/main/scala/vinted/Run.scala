@@ -18,7 +18,6 @@ object Run extends App:
       secondHandItemsRatio = 0.72, // sum of secondHand and newItems is 1.0
       reinvestementInNewRatio = 0.09, //sum of reinvestments is 1
       reinvestementInPlatformRatio = 0.61,
-      reinvestementElsewhereRatio = 0.3,
       effectiveSalesCoefficient = 0.85,
       attractivenessForSellersDelay = 4,
       attractivenessForBuyersDelay = 3,
