@@ -16,7 +16,6 @@ object Run extends App:
       replacementRatio = 0.39, //sum of replacement/impulsive < 1
       impulsiveRatio = 0.3,
       secondHandItemsRatio = 0.72, // sum of secondHand and newItems is 1.0
-      newItemsRatio = 0.28,
       reinvestementInNewRatio = 0.09, //sum of reinvestments is 1
       reinvestementInPlatformRatio = 0.61,
       reinvestementElsewhereRatio = 0.3,
