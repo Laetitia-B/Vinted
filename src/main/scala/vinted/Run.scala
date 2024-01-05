@@ -23,6 +23,8 @@ object Run extends App:
       effectiveSalesCoefficient = 0.85,
       attractivenessForSellersDelay = 4,
       attractivenessForBuyersDelay = 3,
+      attractivenessForSellers = 0.01,
+      attractivenessForBuyers = 0.01,
       reinvestmentDelay = 6
     )
 
