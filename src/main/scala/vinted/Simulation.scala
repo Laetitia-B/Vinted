@@ -1,6 +1,7 @@
 package vinted
 
 import Constants.*
+import Switcher.*
 
 type States = Array[MonthlyState]
 
@@ -14,7 +15,7 @@ case class Simulation(
                        maximumItemsByBuyer: NB_ITEMS_BY_MONTH,
                        maximumItemsBySellerDelay: MONTH,
                        maximumItemsByBuyerDelay: MONTH,
-                       transportCO2Intensity: TransportCO2Intensity,
+                       transportCO2Intensity: strategy.TransportCO2Intensity,
                        averageDistance: KM,
                        averagePrice: EURO,
                        replacementRatio: Double, //sum of replacement/impulsive < 1
@@ -35,41 +36,47 @@ object Simulation:
 
   def getMonthlyStateWithDelay(states: States, delay: Int) = states.lift(states.size - delay)
 
-  def run(simulation: Simulation): States =
+  def applySwitcher(switcher: Option[Switcher], simulation: Simulation, step: Int): Simulation =
+    switcher match
+      case Some(s)=>  simulation.enventuallySwitch(s, step)
+      case None=> simulation
+      
+  def run(simulation: Simulation, switcher: Option[Switcher] = None): States =
 
-    def iterate(states: States): States = {
+    def iterate(states: States, simulation: Simulation): States =
       val timeStep = states.size + 1
       if (timeStep == 100) states
       else
+        val simulationState = applySwitcher(switcher, simulation, timeStep)
         val currentMonthState = states.last
-        val stateBeforeAttractivenessForSellersDelay = getMonthlyStateWithDelay(states, simulation.attractivenessForSellersDelay)
-        val stateBeforeAttractivenessForBuyersDelay = getMonthlyStateWithDelay(states, simulation.attractivenessForBuyersDelay)
+        val stateBeforeAttractivenessForSellersDelay = getMonthlyStateWithDelay(states, simulationState.attractivenessForSellersDelay)
+        val stateBeforeAttractivenessForBuyersDelay = getMonthlyStateWithDelay(states, simulationState.attractivenessForBuyersDelay)
 
-        val totalSellers = simulation.initialSellers + stateBeforeAttractivenessForSellersDelay.map(_.sales).getOrElse(0.0) * simulation.attractivenessForSellers
-        val totalBuyers = simulation.initialBuyers + stateBeforeAttractivenessForBuyersDelay.map(_.itemsForSale).getOrElse(0.0) * simulation.attractivenessForBuyers
+        val totalSellers = simulationState.initialSellers + stateBeforeAttractivenessForSellersDelay.map(_.sales).getOrElse(0.0) * simulationState.attractivenessForSellers
+        val totalBuyers = simulationState.initialBuyers + stateBeforeAttractivenessForBuyersDelay.map(_.itemsForSale).getOrElse(0.0) * simulationState.attractivenessForBuyers
 
-        val additionalPurchaseIntention = getMonthlyStateWithDelay(states, simulation.reinvestmentDelay).map(_.sales).getOrElse(0.0) * simulation.reinvestementInPlatformRatio
+        val additionalPurchaseIntention = getMonthlyStateWithDelay(states, simulationState.reinvestmentDelay).map(_.sales).getOrElse(0.0) * simulationState.reinvestementInPlatformRatio
 
         val itemsByBuyer = 
-          if (simulation.maximumItemsByBuyerDelay - timeStep < 0 ) math.min(simulation.maximumItemsByBuyer, simulation.initialItemsByBuyer)
-          else simulation.initialItemsByBuyer
+          if (simulationState.maximumItemsByBuyerDelay - timeStep < 0 ) math.min(simulationState.maximumItemsByBuyer, simulationState.initialItemsByBuyer)
+          else simulationState.initialItemsByBuyer
         val purchaseIntention = currentMonthState.buyers * itemsByBuyer + additionalPurchaseIntention
 
         val itemsBySeller = 
-          if (simulation.maximumItemsBySellerDelay - timeStep < 0) math.min(simulation.maximumItemsBySeller, simulation.initialItemsBySeller)
-          else simulation.initialItemsBySeller
+          if (simulationState.maximumItemsBySellerDelay - timeStep < 0) math.min(simulationState.maximumItemsBySeller, simulationState.initialItemsBySeller)
+          else simulationState.initialItemsBySeller
         
         val itemsForSale = totalSellers * currentMonthState.itemsBySeller
-        val sales = Math.min(itemsForSale, purchaseIntention) * simulation.effectiveSalesCoefficient
-        val replacement = sales * simulation.replacementRatio
-        val income = sales * simulation.averagePrice
-        val impulsive = sales * simulation.impulsiveRatio
-        val totalDistance = sales * simulation.averageDistance
-        val transportationEmission = totalDistance * strategy.getTransportCO2(timeStep, simulation.transportCO2Intensity)
-        val avoidedProductionEmission = replacement * simulation.secondHandItemsRatio * KG_CO2_PER_ITEM_PRODUCTION
-        val additionalProductionEmission = impulsive * (1 - simulation.secondHandItemsRatio) * KG_CO2_PER_ITEM_PRODUCTION
-        val co2reinvestementElsewhere = income * (1 - simulation.reinvestementInNewRatio - simulation.reinvestementInPlatformRatio) * KG_CO2_PER_EURO_SPENT
-        val co2reinvestementInNew = sales * simulation.reinvestementInNewRatio * KG_CO2_PER_ITEM_PRODUCTION
+        val sales = Math.min(itemsForSale, purchaseIntention) * simulationState.effectiveSalesCoefficient
+        val replacement = sales * simulationState.replacementRatio
+        val income = sales * simulationState.averagePrice
+        val impulsive = sales * simulationState.impulsiveRatio
+        val totalDistance = sales * simulationState.averageDistance
+        val transportationEmission = totalDistance * strategy.getTransportCO2(timeStep, simulationState.transportCO2Intensity)
+        val avoidedProductionEmission = replacement * simulationState.secondHandItemsRatio * KG_CO2_PER_ITEM_PRODUCTION
+        val additionalProductionEmission = impulsive * (1 - simulationState.secondHandItemsRatio) * KG_CO2_PER_ITEM_PRODUCTION
+        val co2reinvestementElsewhere = income * (1 - simulationState.reinvestementInNewRatio - simulationState.reinvestementInPlatformRatio) * KG_CO2_PER_EURO_SPENT
+        val co2reinvestementInNew = sales * simulationState.reinvestementInNewRatio * KG_CO2_PER_ITEM_PRODUCTION
 
         val monthlyState = MonthlyState(
           sellers = totalSellers,
@@ -90,8 +97,7 @@ object Simulation:
           transportationEmission = transportationEmission,
           co2Emission = transportationEmission + additionalProductionEmission - avoidedProductionEmission + co2reinvestementElsewhere + co2reinvestementInNew
         )
-        iterate(states :+ monthlyState)
-    }
+        iterate(states :+ monthlyState, simulationState)
 
     val firstMonthState =
       MonthlyState(
@@ -104,4 +110,4 @@ object Simulation:
       )
 
 
-    iterate(Array(firstMonthState))
+    iterate(Array(firstMonthState), simulation)
