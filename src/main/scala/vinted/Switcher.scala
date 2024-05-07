@@ -38,5 +38,5 @@ implicit class SimulationStateWrapper(simulation: Simulation):
         case ReinvestementInPlatformRatio(r) => simulation.copy(reinvestementInPlatformRatio = r)
         case AttractivenessForSellers(a) => simulation.copy(attractivenessForSellers = a)
         case AttractivenessForBuyers(a) => simulation.copy(attractivenessForBuyers = a)
-        case ReinvestmentDelay(d) => simulation.copy(d)
+        case ReinvestmentDelay(d) => simulation.copy(reinvestmentDelay = d)
     else simulation

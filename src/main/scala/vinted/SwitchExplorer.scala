@@ -63,7 +63,6 @@ object SwitchExplorer {
     val transposed = dynamics.transpose
 
     val dir = File(outputPath)
-    better.files.Dsl.mkdir(dir)
 
     transposed.zip(Seq("Sales", "CO2")).foreach: (metrics, label) =>
       val file = File(s"${outputPath}/${label}.csv")
