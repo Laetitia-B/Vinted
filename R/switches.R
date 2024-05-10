@@ -26,7 +26,7 @@ buildImage = function(dynamicName, dirPath) {
     theme_light()+
     xlab("Years")+
     ylab(dynamicName)+
-    geom_vline(xintercept=25, linetype='dotted', col = 'black')
+    geom_vline(xintercept=20, linetype='dotted', col = 'black')
   
   pngFileName = str_replace(fifi,".csv",".png")
   ggsave(pngFileName, ploplot, width=1500, height = 891, units = "px", dpi=150)
