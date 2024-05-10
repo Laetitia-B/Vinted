@@ -1,7 +1,6 @@
 package vinted
 
 import Constants.*
-import Switcher.*
 
 type States = Array[MonthlyState]
 
@@ -36,18 +35,18 @@ object Simulation:
 
   def getMonthlyStateWithDelay(states: States, delay: Int) = states.lift(states.size - delay)
 
-  def applySwitcher(switcher: Option[Switcher], simulation: Simulation, step: Int): Simulation =
+  def applySwitch(switcher: Option[Switch], simulation: Simulation, step: Int): Simulation =
     switcher match
       case Some(s)=>  simulation.enventuallySwitch(s, step)
       case None=> simulation
       
-  def run(simulation: Simulation, switcher: Option[Switcher] = None): States =
+  def run(simulation: Simulation, switch: Option[Switch] = None): States =
 
     def iterate(states: States, simulation: Simulation): States =
       val timeStep = states.size + 1
       if (timeStep == 100) states
       else
-        val simulationState = applySwitcher(switcher, simulation, timeStep)
+        val simulationState = applySwitch(switch, simulation, timeStep)
         val currentMonthState = states.last
         val stateBeforeAttractivenessForSellersDelay = getMonthlyStateWithDelay(states, simulationState.attractivenessForSellersDelay)
         val stateBeforeAttractivenessForBuyersDelay = getMonthlyStateWithDelay(states, simulationState.attractivenessForBuyersDelay)
